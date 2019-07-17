@@ -109,9 +109,12 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    let arr = [];
     return _.filter(array, function(element,index){
- 
-    })
+      let notSame = array.indexOf(element) >= index;
+      arr.push(notSame);
+    });
+    return arr;
   };
 
 
@@ -120,6 +123,11 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+    let arr = [];
+  _.each(collection,function(item,){
+    arr.push(iterator(item))
+  });
+  return arr;
   };
 
   /*
@@ -161,6 +169,22 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    if(accumulator === undefined){
+      accumulator = collection[0];
+      for(let i = 1; i < collection.length; i++){
+        accumulator = iterator(accumulator,collection[i])
+      }
+    } else if (Array.isArray(collection)){
+      for(let j = 0; j < collection.length; j++){
+          accumulator = iterator(accumulator,collection[j])
+      }
+    } else if(typeof collection === "object"){
+      for(let key in collection){
+        accumulator = iterator(accumulator, collection[key])
+      }
+    } 
+    
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -179,12 +203,18 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(element,item){
+      if (iterator(element)){
+        return true
+      }
+    }, false);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+
   };
 
 
@@ -255,6 +285,7 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
